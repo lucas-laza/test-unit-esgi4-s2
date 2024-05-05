@@ -1,6 +1,7 @@
 import express from "express";
 import { Article } from "./Article";
 import { getNewDataSource } from "./config/database";
+import { Order } from "./Order";
 
 const app = express();
 const port = 3030; // Remplacez xxxx par le port sur lequel vous souhaitez que votre serveur écoute
@@ -32,6 +33,9 @@ async function main() {
 
   await Article.createBaseArticles();
   console.log("Successfully created articles.");
+
+  await Order.createBaseOrders();
+  console.log("Successfully created orders.");
 
   app.listen(port, () => {
     console.log(`🚀 Server listening on port ${port}.`);

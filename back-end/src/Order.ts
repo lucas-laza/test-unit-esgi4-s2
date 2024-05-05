@@ -10,6 +10,29 @@ import { sendEmail } from "./lib/email";
 import { Article } from "./Article";
 import { ArticleInOrder } from "./ArticleInOrder";
 
+const BASE_ORDERS = [
+  [
+    { articleId: "4b11077f-53b4-4fbf-91c6-d194762856cb", quantity: 2 },
+    { articleId: "a4eb922c-ef0f-450e-87f0-de2efdc69373", quantity: 1 },
+  ],
+  [
+    { articleId: "4b11077f-53b4-4fbf-91c6-d194762856cb", quantity: 2 },
+    { articleId: "a4eb922c-ef0f-450e-87f0-de2efdc69373", quantity: 1 },
+    { articleId: "cf8cea20-9b2b-4ffa-b184-ecf002daae8e", quantity: 3 },
+    { articleId: "f3ed3600-8689-416c-a554-ee669e0f5604", quantity: 2 },
+    { articleId: "289fd9bc-2485-46b2-a2cb-090f2c26971d", quantity: 1 },
+    { articleId: "809b0d0a-f079-4a94-99f5-319e42f3e2d7", quantity: 1 },
+  ],
+  [
+    { articleId: "cf8cea20-9b2b-4ffa-b184-ecf002daae8e", quantity: 3 },
+    { articleId: "f3ed3600-8689-416c-a554-ee669e0f5604", quantity: 2 },
+  ],
+  [
+    { articleId: "289fd9bc-2485-46b2-a2cb-090f2c26971d", quantity: 1 },
+    { articleId: "809b0d0a-f079-4a94-99f5-319e42f3e2d7", quantity: 1 },
+  ],
+];
+
 @Entity()
 export class Order extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
@@ -22,6 +45,16 @@ export class Order extends BaseEntity {
 
   @Column({ default: false })
   submitted!: boolean;
+
+  static async createBaseOrders(): Promise<void> {
+
+  
+    // Création de chaque commande avec les articles et quantités correspondantes
+    for (const orderData of BASE_ORDERS) {
+      const order = await Order.createOrder(orderData);
+      console.log("Order created with ID:", order.id);
+    }
+  }
 
   static async createOrder(
     articlesInOrder: { articleId: string; quantity: number }[]
