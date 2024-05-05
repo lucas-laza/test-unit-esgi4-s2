@@ -136,7 +136,7 @@ describe("getShippingCost", () => {
         { articleId: articles[1].id, quantity: 3 },
       ]);
 
-      expect(order.getShippingCost()).toEqual(2 * 1 + 3 * 4); // 14
+      expect(order.getShippingCost()).toEqual(1400); // 1400
     });
   });
 });
@@ -150,9 +150,9 @@ describe("getOrderCost", () => {
     ]);
 
     expect(order.getOrderCost()).toEqual({
-      totalWithoutShipping: 70,
-      shipping: 14,
-      totalWithShipping: 84,
+      totalWithoutShipping: 7000,
+      shipping: 1400,
+      totalWithShipping: 8400,
     });
   });
 });

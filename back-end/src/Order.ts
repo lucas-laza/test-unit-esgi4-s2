@@ -63,12 +63,12 @@ export class Order extends BaseEntity {
   }
 
   getShippingCost(): number {
-    return this.getTotalPrice() >= 100
+    return this.getTotalPrice() >= 10000
       ? 0
       : this.articlesInOrder.reduce(
           (total, { article, quantity }) =>
             total +
-            (article.specialShippingCostEurCent || article.weightG * 10) * quantity,
+            (article.specialShippingCostEurCent || article.weightG ) * quantity,
           0
         );
   }
