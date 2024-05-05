@@ -9,33 +9,39 @@ type Article = {
 };
 
 function App() {
-  const [articles, setArticles] = useState<
-    (Article & { quantity: number })[] | null
-  >(null);
+  const [articles, setArticles] = useState<(Article & { quantity: number })[] | null>(null);
 
-  const fetchArticles = async () => {
-    const { articles: fetchedArticles } = await sendGetRequest("/api/articles");
-    setArticles(
-      (fetchedArticles as Article[]).map((article) => ({
-        ...article,
-        quantity: 0,
-      }))
-    );
-  };
+  useEffect(() => {
+    const fetchArticles = async () => {
+      const response: Record<string, unknown> = await sendGetRequest("/api/articles");
+      if ('articles' in response && Array.isArray(response.articles)) {
+        const { articles } = response as { articles: Article[] };
+        setArticles(
+          articles.map((article: Article) => ({
+            ...article,
+            quantity: 0,
+          }))
+        );
+      } else {
+        // Gérer le cas où la propriété articles est manquante ou non un tableau
+        console.error("Erreur: La réponse de l'API est invalide");
+      }
+    };
+    
+    
+    
+    fetchArticles();
+  }, []);
 
   const setArticleQuantity = (id: string, quantity: number) => {
     if (articles) {
       setArticles(
-        articles?.map((article) =>
+        articles.map((article) =>
           article.id === id ? { ...article, quantity } : article
         )
       );
     }
   };
-
-  useEffect(() => {
-    fetchArticles();
-  }, []);
 
   return (
     <div className="App">
