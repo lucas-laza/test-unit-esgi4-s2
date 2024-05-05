@@ -46,6 +46,22 @@ export class Order extends BaseEntity {
   @Column({ default: false })
   submitted!: boolean;
 
+  @Column({ type: "date", nullable: true })
+  submittedAt!: Date;
+
+  static async getOrders(): Promise<Order[]> {
+    const orders = Order.find({ relations: ["articlesInOrder", "articlesInOrder.article"] });
+    return orders;
+  }
+
+  static async getSubmittedOrders(): Promise<Order[]> {
+    const submittedOrders = Order.find({
+      where: { submitted: true },
+      relations: ["articlesInOrder", "articlesInOrder.article"],
+    });
+    return submittedOrders;
+  }
+
   static async createBaseOrders(): Promise<void> {
 
   
@@ -83,7 +99,11 @@ export class Order extends BaseEntity {
   }
 
   async submitOrder() {
+    if (this.submitted) {
+      throw new Error("Order has already been submitted.");
+    }
     this.submitted = true;
+    this.submittedAt = new Date();
     await this.save();
     sendEmail();
   }

@@ -96,23 +96,32 @@ describe("static createOrder", () => {
 });
 
 describe("submitOrder", () => {
-  it("sets `submitted` to true", async () => {
-    const order = await Order.createOrder([]);
+  it("sets submitted to true, calls function `sendEmail`, and sets submittedAt to current date", async () => {
+    const articles = await Article.find();
+    const order = await Order.createOrder([
+      { articleId: articles[0].id, quantity: 2 },
+      { articleId: articles[1].id, quantity: 1 },
+    ]);
 
+    const currentDate = new Date().toISOString().split("T")[0];
     await order.submitOrder();
 
-    expect(order.submitted).toEqual(true);
-    expect(
-      (await Order.findOne({ where: { id: order.id } }))?.submitted
-    ).toEqual(true);
+    expect(order.submitted).toBeTruthy();
+    expect(order.submittedAt.toISOString().split("T")[0]).toEqual(currentDate);
+    expect(sendEmail).toHaveBeenCalledTimes(1);
   });
 
-  it("calls function `sendEmail`", async () => {
-    const order = await Order.createOrder([]);
-
+  it("throws error if order has already been submitted", async () => {
+    const articles = await Article.find();
+    const order = await Order.createOrder([
+      { articleId: articles[0].id, quantity: 2 },
+      { articleId: articles[1].id, quantity: 1 },
+    ]);
     await order.submitOrder();
 
-    expect(sendEmail).toHaveBeenCalledTimes(1);
+    await expect(order.submitOrder()).rejects.toThrow(
+      "Order has already been submitted."
+    );
   });
 });
 
@@ -154,5 +163,26 @@ describe("getOrderCost", () => {
       shipping: 1400,
       totalWithShipping: 8400,
     });
+  });
+});
+
+describe("getSubmittedOrders", () => {
+  it("returns only submitted orders", async () => {
+    const submittedOrders = await Order.getSubmittedOrders();
+    expect(submittedOrders).toHaveLength(0);
+
+    const articles = await Article.find();
+    const order = await Order.createOrder([
+      { articleId: articles[0].id, quantity: 2 },
+      { articleId: articles[1].id, quantity: 1 },
+    ]);
+    await order.submitOrder();
+    const order2 = await Order.createOrder([
+      { articleId: articles[2].id, quantity: 4 },
+      { articleId: articles[3].id, quantity: 5 },
+    ]);
+
+    const newSubmittedOrders = await Order.getSubmittedOrders();
+    expect(newSubmittedOrders).toHaveLength(1);
   });
 });

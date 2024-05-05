@@ -27,6 +27,41 @@ app.get("/api/articles", async (req, res) => {
   }
 });
 
+app.get("/api/orders", async (req, res) => {
+  try {
+    const orders = await Order.getOrders();
+    res.json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.put("/api/orders/:id/submit", async (req, res) => {
+  const orderId = req.params.id;
+
+  try {
+    const order = await Order.findOneOrFail({ where: { id: orderId }, relations: ["articlesInOrder", "articlesInOrder.article"] });
+
+    await order.submitOrder();
+    res.json(order);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+app.get("/api/orders/submitted", async (req, res) => {
+  try {
+    const submittedOrders = await Order.getSubmittedOrders();
+    res.json(submittedOrders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 async function main() {
   const dataSource = await getNewDataSource("./sqlite.db");
   console.log("💾 Successfully connected to database.");
