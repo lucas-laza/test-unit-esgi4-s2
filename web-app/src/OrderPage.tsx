@@ -14,7 +14,19 @@ const OrderPage = () => {
     const response = await sendGetRequest(`/api/orders/${orderId}`);
     setOrder(response as Order);
   };
+
+  const convertCentsToEuros = (cents: number): number => {
+    return cents / 100;
+  };
   
+  const getTotalPrice = (): number => {
+    if (!order) {
+      return 0;
+    }
+    return order.articlesInOrder.reduce((total, articleInOrder) => {
+      return total + articleInOrder.quantity * articleInOrder.article.priceEurCent;
+    }, 0);
+  };
   
 
   const handleSubmit = async () => {
@@ -55,9 +67,11 @@ const OrderPage = () => {
             <p>Article ID: {articleInOrder.article.id}</p>
             <p>Article Name: {articleInOrder.article.name}</p>
             <p>Quantity: {articleInOrder.quantity}</p>
+            <p>Price: {convertCentsToEuros(articleInOrder.quantity * articleInOrder.article.priceEurCent)} €</p>
           </li>
         ))}
       </ul>
+      <p>Total Price: {convertCentsToEuros(getTotalPrice())} €</p>
     </div>
   );
 };

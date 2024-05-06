@@ -15,6 +15,6 @@ export type ArticleInOrder = {
 export type Order = {
   id: string;
   submitted: boolean;
-  submittedAt: string;
+  submittedAt: string|null;
   articlesInOrder: ArticleInOrder[];
 };

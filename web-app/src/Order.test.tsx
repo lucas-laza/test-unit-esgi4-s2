@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import OrderPage from "./OrderPage";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { Order } from "./types";
 
 jest.mock("./lib/http", () => {
   return {
@@ -40,6 +41,7 @@ jest.mock("./lib/http", () => {
 });
 
 describe("OrderPage", () => {
+  
   it("renders order details", async () => {
     render(
       <MemoryRouter initialEntries={["/orders/order1"]}>
@@ -68,6 +70,20 @@ describe("OrderPage", () => {
 
     const articleElement2 = screen.getByText(/nems au poulet x 2/i);
     expect(articleElement2).toBeInTheDocument();
+  });
+
+  it('should convert cents to euros correctly', async () => {
+
+    render(
+      <MemoryRouter initialEntries={["/orders/order1"]}>
+        <Routes>
+          <Route path="/orders/:orderId" element={<OrderPage />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const priceElement = screen.getByText(/Price: 36.00 €/i);
+    expect(priceElement).toBeInTheDocument();
   });
 
   it("submits the order and updates the status", async () => {
