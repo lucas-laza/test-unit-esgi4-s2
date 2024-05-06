@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import App from "./App";
+import ArticlePage from "./ArticlePage";
 
 jest.mock("./lib/http", () => {
   return {
@@ -18,7 +18,7 @@ jest.mock("./lib/http", () => {
 
 describe("App", () => {
   it("renders loading status first and articles after fetching data", async () => {
-    render(<App />);
+    render(<ArticlePage />);
 
     const loadingElement = screen.getByText(/Chargement…/i);
     expect(loadingElement).toBeInTheDocument();
@@ -53,7 +53,7 @@ describe("App", () => {
 
   describe("when button + is clicked", () => {
     it("increments count", async () => {
-      render(<App />);
+      render(<ArticlePage />);
 
       let articleElements: HTMLElement[];
       await waitFor(() => {

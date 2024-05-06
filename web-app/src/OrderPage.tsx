@@ -43,7 +43,11 @@ const OrderPage = () => {
       {!order.submitted && (
         <button onClick={handleSubmit}>Submit Order</button>
       )}
+      
+      {order.submittedAt !== null ? (
       <p>Submitted At: {order.submittedAt}</p>
+    ) : null}
+      
       <h2>Articles in Order</h2>
       <ul>
         {order.articlesInOrder.map((articleInOrder) => (
