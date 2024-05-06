@@ -28,6 +28,18 @@ const OrderPage = () => {
     }, 0);
   };
 
+  const getTotalShippingCost = (): number => {
+    if (!order) {
+      return 0;
+    }
+    return order.articlesInOrder.reduce((total, articleInOrder) => {
+      if (articleInOrder.article.specialShippingCostEurCent !== null) {
+        return total + articleInOrder.quantity * articleInOrder.article.specialShippingCostEurCent;
+      } else {
+        return total;
+      }
+    }, 0);
+  };
 
   const handleSubmit = async () => {
     if (order) {
@@ -75,6 +87,7 @@ const OrderPage = () => {
         ))}
       </ul>
       <p>Total Price: {convertCentsToEuros(getTotalPrice())} €</p>
+      <p>ShippingCostTotal: {convertCentsToEuros(getTotalShippingCost())} €</p>
     </div>
   );
 };
