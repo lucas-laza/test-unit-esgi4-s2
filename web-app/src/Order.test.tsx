@@ -84,6 +84,10 @@ describe("OrderPage", () => {
 
     const priceElement = screen.getByText(/Price: 36.00 €/i);
     expect(priceElement).toBeInTheDocument();
+
+    const shippingCostElement = screen.getByText(/ShippingCost: 4 €/i);
+    expect(shippingCostElement).toBeInTheDocument();
+   
   });
 
   it("submits the order and updates the status", async () => {

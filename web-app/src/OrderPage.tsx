@@ -18,7 +18,7 @@ const OrderPage = () => {
   const convertCentsToEuros = (cents: number): number => {
     return cents / 100;
   };
-  
+
   const getTotalPrice = (): number => {
     if (!order) {
       return 0;
@@ -27,7 +27,7 @@ const OrderPage = () => {
       return total + articleInOrder.quantity * articleInOrder.article.priceEurCent;
     }, 0);
   };
-  
+
 
   const handleSubmit = async () => {
     if (order) {
@@ -55,11 +55,11 @@ const OrderPage = () => {
       {!order.submitted && (
         <button onClick={handleSubmit}>Submit Order</button>
       )}
-      
+
       {order.submittedAt !== null ? (
-      <p>Submitted At: {order.submittedAt}</p>
-    ) : null}
-      
+        <p>Submitted At: {order.submittedAt}</p>
+      ) : null}
+
       <h2>Articles in Order</h2>
       <ul>
         {order.articlesInOrder.map((articleInOrder) => (
@@ -68,6 +68,9 @@ const OrderPage = () => {
             <p>Article Name: {articleInOrder.article.name}</p>
             <p>Quantity: {articleInOrder.quantity}</p>
             <p>Price: {convertCentsToEuros(articleInOrder.quantity * articleInOrder.article.priceEurCent)} €</p>
+            {articleInOrder.article.specialShippingCostEurCent !== null && (
+              <p>ShippingCost: {convertCentsToEuros(articleInOrder.article.specialShippingCostEurCent)} €</p>
+            )}
           </li>
         ))}
       </ul>
