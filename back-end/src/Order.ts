@@ -11,27 +11,12 @@ import { Article } from "./Article";
 import { ArticleInOrder } from "./ArticleInOrder";
 
 const BASE_ORDERS = [
-  [
-    { articleId: "4b11077f-53b4-4fbf-91c6-d194762856cb", quantity: 2 },
-    { articleId: "a4eb922c-ef0f-450e-87f0-de2efdc69373", quantity: 1 },
-  ],
-  [
-    { articleId: "4b11077f-53b4-4fbf-91c6-d194762856cb", quantity: 2 },
-    { articleId: "a4eb922c-ef0f-450e-87f0-de2efdc69373", quantity: 1 },
-    { articleId: "cf8cea20-9b2b-4ffa-b184-ecf002daae8e", quantity: 3 },
-    { articleId: "f3ed3600-8689-416c-a554-ee669e0f5604", quantity: 2 },
-    { articleId: "289fd9bc-2485-46b2-a2cb-090f2c26971d", quantity: 1 },
-    { articleId: "809b0d0a-f079-4a94-99f5-319e42f3e2d7", quantity: 1 },
-  ],
-  [
-    { articleId: "cf8cea20-9b2b-4ffa-b184-ecf002daae8e", quantity: 3 },
-    { articleId: "f3ed3600-8689-416c-a554-ee669e0f5604", quantity: 2 },
-  ],
-  [
-    { articleId: "289fd9bc-2485-46b2-a2cb-090f2c26971d", quantity: 1 },
-    { articleId: "809b0d0a-f079-4a94-99f5-319e42f3e2d7", quantity: 1 },
-  ],
+  [2, 1],   // Quantities for the first set of articles
+  [2, 1, 3, 2, 1, 1],  // Quantities for the second set of articles
+  [3, 2],   // Quantities for the third set of articles
+  [1, 1]    // Quantities for the fourth set of articles
 ];
+
 
 @Entity()
 export class Order extends BaseEntity {
@@ -71,10 +56,15 @@ export class Order extends BaseEntity {
   }
 
   static async createBaseOrders(): Promise<void> {
-
-  
-    // Création de chaque commande avec les articles et quantités correspondantes
-    for (const orderData of BASE_ORDERS) {
+    // Fetch all articles from the database
+    const articles = await Article.find();
+    
+    // Create orders using articles and their quantities
+    for (let i = 0; i < BASE_ORDERS.length; i++) {
+      const orderData = BASE_ORDERS[i].map((quantity, index) => {
+        return { articleId: articles[index].id, quantity: quantity };
+      });
+      
       const order = await Order.createOrder(orderData);
       console.log("Order created with ID:", order.id);
     }
