@@ -1,77 +1,26 @@
-import React, { useEffect, useState } from "react";
-import "./App.css";
-import { sendGetRequest } from "./lib/http";
-
-type Article = {
-  id: string;
-  name: string;
-  priceEur: number;
-};
+import React from 'react';
+import { Link, Route, Routes } from 'react-router-dom';
+import './App.css';
+import ArticlePage from './ArticlePage';
+import OrderPage from './OrderPage';
+import OrdersPage from './OrdersPage'; // Import the OrdersPage component
 
 function App() {
-  const [articles, setArticles] = useState<(Article & { quantity: number })[] | null>(null);
-
-  useEffect(() => {
-    const fetchArticles = async () => {
-      const response: Record<string, unknown> = await sendGetRequest("/api/articles");
-      if ('articles' in response && Array.isArray(response.articles)) {
-        const { articles } = response as { articles: Article[] };
-        setArticles(
-          articles.map((article: Article) => ({
-            ...article,
-            quantity: 0,
-          }))
-        );
-      } else {
-        // Gérer le cas où la propriété articles est manquante ou non un tableau
-        console.error("Erreur: La réponse de l'API est invalide");
-      }
-    };
-    
-    
-    
-    fetchArticles();
-  }, []);
-
-  const setArticleQuantity = (id: string, quantity: number) => {
-    if (articles) {
-      setArticles(
-        articles.map((article) =>
-          article.id === id ? { ...article, quantity } : article
-        )
-      );
-    }
-  };
-
   return (
     <div className="App">
       <header className="App-header">
-        {articles ? (
-          <ul>
-            {articles.map((article) => (
-              <li key={article.id}>
-                <span>{article.name}</span>
-                <button
-                  onClick={() => {
-                    setArticleQuantity(article.id, article.quantity - 1);
-                  }}
-                >
-                  -
-                </button>
-                {article.quantity}
-                <button
-                  onClick={() => {
-                    setArticleQuantity(article.id, article.quantity + 1);
-                  }}
-                >
-                  +
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          "Chargement…"
-        )}
+        {/* Add navigation buttons */}
+        <nav>
+          <Link to="/" className="nav-button">Articles</Link>
+          <Link to="/orders" className="nav-button">Orders</Link>
+        </nav>
+
+        {/* Add routes */}
+        <Routes>
+          <Route path="/" element={<ArticlePage />} />
+          <Route path="/orders" element={<OrdersPage />} /> {/* Add the route for OrdersPage */}
+          <Route path="/orders/:id" element={<OrderPage />} />
+        </Routes>
       </header>
     </div>
   );

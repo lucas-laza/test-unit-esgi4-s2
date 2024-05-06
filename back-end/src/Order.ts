@@ -49,6 +49,14 @@ export class Order extends BaseEntity {
   @Column({ type: "date", nullable: true })
   submittedAt!: Date;
 
+  static async getOneOrder(orderId: string): Promise<Order | null> {
+    const order = await Order.findOne({
+      where: { id: orderId },
+      relations: ['articlesInOrder', 'articlesInOrder.article'],
+    });
+    return order;
+  }
+
   static async getOrders(): Promise<Order[]> {
     const orders = Order.find({ relations: ["articlesInOrder", "articlesInOrder.article"] });
     return orders;

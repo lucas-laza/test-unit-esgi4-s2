@@ -37,6 +37,22 @@ app.get("/api/orders", async (req, res) => {
   }
 });
 
+app.get("/api/orders/:id", async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const order = await Order.getOneOrder(orderId);
+
+    if (!order) {
+      return res.status(404).send("Order not found");
+    }
+
+    res.json(order);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 app.put("/api/orders/:id/submit", async (req, res) => {
   const orderId = req.params.id;
 
